@@ -1,0 +1,102 @@
+/*
+ * Copyright (c) 2023-2024 David Fiander
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/rgb.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/outputs.h>
+#include <dt-bindings/zmk/reset.h>
+#include <dt-bindings/zmk/ext_power.h>
+
+#define MEH LC(LS(LALT))
+
+// Space Cadet parens
+#define LSPO &mt LSHFT LPAR
+#define RSPO &mt RSHFT RPAR
+
+// Alt / ESC
+#define ALTESC &mt LALT ESC
+
+
+#define _FN 1
+#define _PL 2
+#define _RS 3
+
+&caps_word {
+	   continue-list = <UNDERSCORE MINUS BACKSPACE DELETE>;
+};
+
+&gresc {
+	   keep-mods = <(MOD_RSFT|MOD_LSFT)>;
+};
+
+/ {
+    conditional_layers {
+        compatible = "zmk,conditional-layers";
+        tri_layer {
+            if-layers = <_FN _PL>;
+            then-layer = <_RS>;
+        };
+    };
+};
+
+/ {
+	behaviors {
+		    layer_caps: behavior_layer_caps_word {
+		    		compatible = "zmk,behavior-hold-tap";
+				label="LAYER_CAPS";
+				flavor="tap-preferred";
+				tapping-term-ms=<200>;
+				#binding-cells = <2>;
+				bindings = <&mo>, <&caps_word>;
+		    };
+	};
+
+	keymap {
+		compatible = "zmk,keymap";
+
+		default_layer {
+			bindings = <
+	&kp GRAVE  &kp N1 &kp N2 &kp N3 &kp N4 &kp N5 &kp N6 &kp N7 &kp N8 &kp N9 &kp N0 &kp MINUS &kp EQUAL  &kp BSPC
+	&kp TAB  &kp Q  &kp W  &kp E  &kp R  &kp T  &kp Y  &kp U  &kp I  &kp O  &kp P  &kp LBKT  &kp RBKT  &kp BSLH
+	&kp LCTL  &kp A  &kp S  &kp D  &kp F  &kp G  &kp H  &kp J  &kp K  &kp L  &kp SEMI &kp SQT           &mt RCTL RET
+	LSPO   &kp Z  &kp X  &kp C  &kp V  &kp B  &kp N  &kp M  &kp COMMA &kp DOT &kp FSLH           RSPO
+	&layer_caps _FN 0 &kp LGUI ALTESC             &kp SPACE                     ALTESC  &kp RGUI  &mt MEH K_APP &mo _PL
+			>;
+		};
+
+		fn_layer {
+			bindings = <
+	&trans    &kp F1    &kp F2    &kp F3    &kp F4    &kp F5    &kp F6    &kp F7     &kp F8   &kp F9    &kp F10     &kp F11   &kp F12    &kp DEL
+	&kp LC(LALT) &trans    &trans    &trans    &trans    &trans    &kp HOME  &kp PG_DN &kp PG_UP  &kp END  &kp PSCRN   &trans    &trans  &trans
+	&trans         &trans    &trans    &trans    &trans    &trans    &kp LEFT  &kp DOWN   &kp UP   &kp RIGHT &trans    &trans    &trans
+	&trans           &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans                     &trans
+	&trans     &trans           &trans                                   &trans                          &trans    &trans    &trans       &trans
+			>;
+		};
+
+		pl_layer {
+			bindings = <
+	&trans    &kp F1    &kp F2    &kp F3    &kp F4    &kp F5    &kp F6    &kp F7     &kp F8   &kp F9    &kp F10     &kp F11   &kp F12    &kp INS
+	&kp LC(LALT) &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
+	&trans         &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans            &trans
+	&trans           &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans                    &trans
+	&trans     &trans    &trans                                   &trans                                   &trans    &trans    &trans    &trans
+			>;
+		};
+
+		rs_layer {
+			bindings = <
+	&bt BT_CLR &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2  &bt BT_SEL 3 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
+	&trans       &trans    &trans    &trans    &rgb_ug RGB_TOG &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans         &trans
+	&trans         &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans                       &trans
+	&trans          &trans    &trans    &trans    &trans    &bootloader          &trans    &trans    &trans    &trans    &trans                     &trans
+	&trans        &trans    &trans                                   &trans                                   &trans       &trans       &trans      &trans
+			>;
+		};
+	};
+};
